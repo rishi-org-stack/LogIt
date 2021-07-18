@@ -1,37 +1,22 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
+	"context"
+	"logit/v1/package/api"
+	"logit/v1/util/config"
+	"logit/v1/util/db"
+	"logit/v1/util/server"
 
 	"github.com/joho/godotenv"
 )
 
 func main() {
 	godotenv.Load()
-	http.HandleFunc("/", handler)
-	fmt.Println("listening...")
-	err := http.ListenAndServe(GetPort(), nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	// fmt.Fprintf(w, "Hello. This is our first Go web app on Heroku!")
-	json.NewEncoder(w).Encode("ok its working")
-	// Get the Port from the environment so we can run on Heroku func GetPort() string { 	var port = os.Getenv("PORT") 	// Set a default port if there is nothing in the environment 	if port == "" { 		port = "4747" 		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
-}
-func GetPort() string {
-
-	var port = os.Getenv("PORT")
-	// Set a default port if there is nothing in the environment
-	if port == "" {
-		port = "4747"
-		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
-	}
-	return ":" + port
+	env := config.Init()
+	client := db.Connect(context.Background(), env)
+	s := server.Init(env)
+	e := s.Start()
+	ap := api.Init(client)
+	ap.Route(e)
+	e.Logger.Fatal(e.Start(s.Port))
 }
