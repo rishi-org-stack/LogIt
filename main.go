@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,7 +18,8 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello. This is our first Go web app on Heroku!")
+	// fmt.Fprintf(w, "Hello. This is our first Go web app on Heroku!")
+	json.NewEncoder(w).Encode("ok its working")
 	// Get the Port from the environment so we can run on Heroku func GetPort() string { 	var port = os.Getenv("PORT") 	// Set a default port if there is nothing in the environment 	if port == "" { 		port = "4747" 		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
 }
 func GetPort() string {
