@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func greet(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +12,7 @@ func greet(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	godotenv.Load()
+	// godotenv.Load()
 	http.HandleFunc("/", greet)
 	http.ListenAndServe(os.Getenv("PORT"), nil)
 }
