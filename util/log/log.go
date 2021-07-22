@@ -26,6 +26,10 @@ func Init(source, level string) *message {
 		level:  level,
 	}
 }
+func (m *message) Mut(mess interface{}) *message {
+	m.mess = mess
+	return m
+}
 func (m *message) Info() {
 	glog.Infoln(
 		infoLog+"\n\tDATE: ",
