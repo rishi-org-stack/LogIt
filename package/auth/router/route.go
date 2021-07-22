@@ -6,9 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// type http struct {
-// }
-
 func Route(g *echo.Group, m ...echo.MiddlewareFunc) {
 	grpAuth := g.Group("/auth")
 	grpAuth.GET("/", ok)
