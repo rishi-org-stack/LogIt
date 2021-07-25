@@ -17,11 +17,11 @@ func Connect(ctx context.Context, env *config.Env) *mongo.Client {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully connected and pinged.")
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
+	fmt.Println("Successfully connected and pinged.", client)
+	// defer func() {
+	// 	if err = client.Disconnect(ctx); err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
 	return client
 }

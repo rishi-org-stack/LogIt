@@ -2,6 +2,8 @@ package api
 
 import (
 	authR "logit/v1/package/auth/router"
+	userR "logit/v1/package/user/router"
+	mid "logit/v1/util/middleware"
 	"os"
 
 	"github.com/labstack/echo/v4"
@@ -9,20 +11,26 @@ import (
 )
 
 type api struct {
-	Client  *mongo.Client
-	Version string
+	Client      *mongo.Client
+	Version     string
+	MiddleWares []echo.MiddlewareFunc
 }
 
-func Init(c *mongo.Client) *api {
+func Init(c *mongo.Client, m ...echo.MiddlewareFunc) *api {
 	return &api{
-		Client:  c,
-		Version: os.Getenv("VERSION"),
+		Client:      c,
+		Version:     os.Getenv("VERSION"),
+		MiddleWares: m,
 	}
 }
 func (ap *api) Route(e *echo.Echo) {
+	e.Use(mid.ConnectionMDB(ap.Client))
+
 	v1 := e.Group("/api/" + ap.Version)
+
 	// v1.GET("/", func(c echo.Context) error {
 	// 	return c.String(http.StatusAccepted, "Works well\n")
 	// })
-	authR.Route(v1)
+	authR.Route(v1, mid.ConnectionMDB(ap.Client))
+	userR.Route(v1,ap.MiddleWares...)
 }

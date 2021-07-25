@@ -10,6 +10,9 @@ type (
 		DB                     string
 		Port                   string
 		DatabaseContextTimeout int
+		JWTDurtaion            int
+		Algo                   string
+		Key                    string
 	}
 )
 
@@ -22,5 +25,8 @@ func Init() *Env {
 		DB:                     os.Getenv("DB"),
 		Port:                   ":" + os.Getenv("PORT"),
 		DatabaseContextTimeout: dbTimeout,
+		Algo:                   "HS256",
+		Key:                    "RishiStack!1709",
+		JWTDurtaion:            60,
 	}
 }
