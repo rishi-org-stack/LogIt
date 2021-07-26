@@ -2,7 +2,7 @@ package api
 
 import (
 	"logit/v1/package/auth"
-	amdb "logit/v1/package/auth/databases/mongo"
+	amdb "logit/v1/package/auth/databases/mgdb"
 	authR "logit/v1/package/auth/router"
 	userR "logit/v1/package/user/router"
 	mid "logit/v1/util/middleware"
