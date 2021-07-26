@@ -8,7 +8,7 @@ import (
 	"logit/v1/util/config"
 )
 
-func Connect(ctx context.Context, env *config.Env) *mongo.Client {
+func Connect(ctx context.Context, env *config.Env) *mongo.Database {
 	client, err := mongo.Connect(
 		ctx,
 		options.Client().
@@ -23,5 +23,6 @@ func Connect(ctx context.Context, env *config.Env) *mongo.Client {
 	// 		panic(err)
 	// 	}
 	// }()
-	return client
+	//TODO: ADD DB NAME FROM ENV TYPE
+	return (client.Database("LogIt"))
 }

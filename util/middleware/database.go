@@ -5,7 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func ConnectionMDB(client *mongo.Client) echo.MiddlewareFunc {
+func ConnectionMDB(client *mongo.Database) echo.MiddlewareFunc {
 	return func(hf echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			c.Set("mgClient", client)

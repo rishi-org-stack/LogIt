@@ -1,3 +1,4 @@
 1. create custom logger
 2. base model create krna hai 
 3. basic auth setup krna hai
+4. ath aur user module ajj kahatam krna hai
