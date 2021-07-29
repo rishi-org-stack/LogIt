@@ -9,11 +9,12 @@ import (
 type (
 	DB interface {
 		FindOrInsert(ctx context.Context, atr *AuthRequest) (interface{}, error)
-		Update(ctx context.Context, atr *AuthRequest) (interface{}, error) 
+		Update(ctx context.Context, atr *AuthRequest) (interface{}, error)
+		InsertUser(ctx context.Context, atr *AuthRequest) (interface{}, error)
 	}
 
 	Service interface {
-		HandleAuth(ctx context.Context) (interface{}, error)
+		HandleAuth(ctx context.Context) (*AuthResponse, error)
 	}
 	AuthRequest struct {
 		ID       primitive.ObjectID `bson:"_id,omitempty"`

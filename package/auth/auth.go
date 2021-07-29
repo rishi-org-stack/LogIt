@@ -21,14 +21,14 @@ func Init(db DB, js TokenGenratorInterface) *AuthService {
 	}
 }
 
-func (authSer AuthService) HandleAuth(ctx context.Context) (interface{}, error) {
+func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error) {
 	atr := &AuthRequest{
 		Email:    "okkkkk mai",
 		Password: "password",
 	}
 	res, err := authSer.AuthData.FindOrInsert(ctx, atr)
 	if err != nil {
-		return &AuthRequest{}, err
+		return &AuthResponse{}, err
 	}
 	switch res.(type) {
 	case *AuthRequest:
@@ -42,12 +42,26 @@ func (authSer AuthService) HandleAuth(ctx context.Context) (interface{}, error) 
 				Token: token,
 			}, nil
 		}
-		return nil, fmt.Errorf("password and email combination doesn't matched")
+		return &AuthResponse{}, fmt.Errorf("password and email combination doesn't matched")
 	case primitive.ObjectID:
 		atr.Status = string(Verified)
 		atr.ID = res.(primitive.ObjectID)
-		authSer.AuthData.Update(ctx, atr)
-		return "success user saved", nil
+		_, err := authSer.AuthData.Update(ctx, atr)
+		if err != nil {
+			return &AuthResponse{}, err
+		}
+		// atr.ID = updateID.(primitive.ObjectID)
+		_, err = authSer.AuthData.InsertUser(ctx, atr)
+		if err != nil {
+			return &AuthResponse{}, err
+		}
+		token, err := authSer.JwtSer.GenrateToken(atr.ID.String(), atr.Email)
+		if err != nil {
+			return nil, err
+		}
+		return &AuthResponse{
+			Token: token,
+		}, nil
 	}
-	return "nil from service", nil
+	return &AuthResponse{}, nil
 }

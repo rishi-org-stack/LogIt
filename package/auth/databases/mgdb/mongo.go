@@ -35,7 +35,8 @@ func (au AuthDb) FindOrInsert(ctx context.Context, atr *auth.AuthRequest) (inter
 }
 func (au AuthDb) InsertUser(ctx context.Context, atr *auth.AuthRequest) (interface{}, error) {
 	db := ctx.Value("mgClient").(*mongo.Database)
-	res, err := db.Collection(DB).InsertOne(ctx, atr)
+
+	res, err := db.Collection(UserDB).InsertOne(ctx, bson.D{{Key: "auth_id", Value: atr.ID}})
 	// if err != nil && err.Error() == "mongo: no documents in result" {
 	// 	res, err := db.Collection(DB).
 	// 		InsertOne(ctx, atr)
