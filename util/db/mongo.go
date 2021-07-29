@@ -17,7 +17,7 @@ func Connect(ctx context.Context, env *config.Env) *mongo.Database {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully connected and pinged.", client)
+	fmt.Println("Successfully connected and pinged.")
 	// defer func() {
 	// 	if err = client.Disconnect(ctx); err != nil {
 	// 		panic(err)
