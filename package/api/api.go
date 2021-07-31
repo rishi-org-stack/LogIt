@@ -4,6 +4,8 @@ import (
 	"logit/v1/package/auth"
 	amdb "logit/v1/package/auth/databases/mgdb"
 	authR "logit/v1/package/auth/router"
+	"logit/v1/package/user"
+	umdb "logit/v1/package/user/databases/mgdb"
 	userR "logit/v1/package/user/router"
 	jAuth "logit/v1/util/auth"
 	mid "logit/v1/util/middleware"
@@ -37,6 +39,7 @@ func (ap *api) Route(e *echo.Echo) {
 	// 	return c.String(http.StatusAccepted, "Works well\n")
 	// })
 	authService := auth.Init(amdb.AuthDb{}, ap.Jwt)
+	userService := user.Init(&umdb.UserDb{})
 	authR.Route(authService, v1, mid.ConnectionMDB(ap.Client))
-	userR.Route(v1, ap.MiddleWares...)
+	userR.Route(v1, userService, ap.MiddleWares...)
 }

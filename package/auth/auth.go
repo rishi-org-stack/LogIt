@@ -23,7 +23,7 @@ func Init(db DB, js TokenGenratorInterface) *AuthService {
 
 func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error) {
 	atr := &AuthRequest{
-		Email:    "okkkkk mai",
+		Email:    "okjjjjjj@gmail.com",
 		Password: "password",
 	}
 	res, err := authSer.AuthData.FindOrInsert(ctx, atr)
@@ -34,7 +34,7 @@ func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error
 	case *AuthRequest:
 		resA := res.(*AuthRequest)
 		if resA.Password == atr.Password {
-			token, err := authSer.JwtSer.GenrateToken(resA.ID.String(), resA.Email)
+			token, err := authSer.JwtSer.GenrateToken(resA.ID.Hex(), resA.Email)
 			if err != nil {
 				return nil, err
 			}
@@ -46,16 +46,16 @@ func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error
 	case primitive.ObjectID:
 		atr.Status = string(Verified)
 		atr.ID = res.(primitive.ObjectID)
-		_, err := authSer.AuthData.Update(ctx, atr)
-		if err != nil {
-			return &AuthResponse{}, err
-		}
+		// _, err := authSer.AuthData.Update(ctx, atr)
+		// if err != nil {
+		// 	return &AuthResponse{}, err
+		// }
 		// atr.ID = updateID.(primitive.ObjectID)
 		_, err = authSer.AuthData.InsertUser(ctx, atr)
 		if err != nil {
 			return &AuthResponse{}, err
 		}
-		token, err := authSer.JwtSer.GenrateToken(atr.ID.String(), atr.Email)
+		token, err := authSer.JwtSer.GenrateToken(atr.ID.Hex(), atr.Email)
 		if err != nil {
 			return nil, err
 		}

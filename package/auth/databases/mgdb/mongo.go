@@ -37,11 +37,6 @@ func (au AuthDb) InsertUser(ctx context.Context, atr *auth.AuthRequest) (interfa
 	db := ctx.Value("mgClient").(*mongo.Database)
 
 	res, err := db.Collection(UserDB).InsertOne(ctx, bson.D{{Key: "auth_id", Value: atr.ID}})
-	// if err != nil && err.Error() == "mongo: no documents in result" {
-	// 	res, err := db.Collection(DB).
-	// 		InsertOne(ctx, atr)
-	// 	return res.InsertedID, err
-	// }
 	return res.InsertedID, err
 }
 func (au AuthDb) Update(ctx context.Context, atr *auth.AuthRequest) (interface{}, error) {
@@ -54,9 +49,10 @@ func (au AuthDb) Update(ctx context.Context, atr *auth.AuthRequest) (interface{}
 	if err != nil {
 		fmt.Println("53\n", err)
 	}
+	Id := (atr.ID)
 	db := ctx.Value("mgClient").(*mongo.Database)
 	res, err := db.Collection(DB).
-		UpdateByID(ctx, atr.ID, bson.M{"$set": quey})
+		UpdateByID(ctx, Id, bson.M{"$set": quey})
 
 	return res.UpsertedID, err
 }
