@@ -2,10 +2,10 @@ package mgdb
 
 import (
 	"context"
-	"fmt"
 	"logit/v1/package/auth"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -40,19 +40,20 @@ func (au AuthDb) InsertUser(ctx context.Context, atr *auth.AuthRequest) (interfa
 	return res.InsertedID, err
 }
 func (au AuthDb) Update(ctx context.Context, atr *auth.AuthRequest) (interface{}, error) {
-	data, err := bson.Marshal(atr)
-	if err != nil {
-		fmt.Println("48\n", err)
-	}
-	quey := &bson.M{}
-	err = bson.Unmarshal(data, quey)
-	if err != nil {
-		fmt.Println("53\n", err)
-	}
-	Id := (atr.ID)
 	db := ctx.Value("mgClient").(*mongo.Database)
 	res, err := db.Collection(DB).
-		UpdateByID(ctx, Id, bson.M{"$set": quey})
+		ReplaceOne(ctx, bson.M{"_id": atr.ID}, atr)
 
 	return res.UpsertedID, err
+}
+func (au AuthDb) GetRequest(ctx context.Context, id primitive.ObjectID) (*auth.AuthRequest, error) {
+	db := ctx.Value("mgClient").(*mongo.Database)
+	req := &auth.AuthRequest{}
+	authColl := db.Collection(DB)
+	result := authColl.FindOne(ctx, bson.D{{Key: "_id", Value: id}})
+	err := result.Decode(req)
+	if err != nil {
+		return &auth.AuthRequest{}, err
+	}
+	return req, nil
 }

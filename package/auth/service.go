@@ -12,16 +12,18 @@ type (
 		FindOrInsert(ctx context.Context, atr *AuthRequest) (interface{}, error)
 		Update(ctx context.Context, atr *AuthRequest) (interface{}, error)
 		InsertUser(ctx context.Context, atr *AuthRequest) (interface{}, error)
+		GetRequest(ctx context.Context, id primitive.ObjectID) (*AuthRequest, error)
 	}
 
 	Service interface {
 		HandleAuth(ctx context.Context) (*AuthResponse, error)
+		GetRequestByID(ctx context.Context, id string) (*AuthRequest, error)
 	}
 	AuthRequest struct {
-		ID       primitive.ObjectID `bson:"_id,omitempty"`
-		Email    string             `bson:"email,omitempty"`
-		Password string             `bson:"password,$default=yet to discuss"`
-		Status   string             `bson:"status,omitempty"`
+		ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+		Email    string             `json:"email" bson:"email,omitempty"`
+		Password string             `json:"password" bson:"password,$default=yet to discuss"`
+		Status   string             `json:"status" bson:"status,omitempty"`
 	}
 	StatusType string
 

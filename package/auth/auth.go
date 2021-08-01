@@ -23,7 +23,7 @@ func Init(db DB, js TokenGenratorInterface) *AuthService {
 
 func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error) {
 	atr := &AuthRequest{
-		Email:    "okjjjjjj@gmail.com",
+		Email:    "rishi@gmail.com",
 		Password: "password",
 	}
 	res, err := authSer.AuthData.FindOrInsert(ctx, atr)
@@ -46,10 +46,10 @@ func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error
 	case primitive.ObjectID:
 		atr.Status = string(Verified)
 		atr.ID = res.(primitive.ObjectID)
-		// _, err := authSer.AuthData.Update(ctx, atr)
-		// if err != nil {
-		// 	return &AuthResponse{}, err
-		// }
+		_, err := authSer.AuthData.Update(ctx, atr)
+		if err != nil {
+			return &AuthResponse{}, err
+		}
 		// atr.ID = updateID.(primitive.ObjectID)
 		_, err = authSer.AuthData.InsertUser(ctx, atr)
 		if err != nil {
@@ -64,4 +64,16 @@ func (authSer AuthService) HandleAuth(ctx context.Context) (*AuthResponse, error
 		}, nil
 	}
 	return &AuthResponse{}, nil
+}
+
+func (ar AuthService) GetRequestByID(ctx context.Context, id string) (*AuthRequest, error) {
+	Id, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return &AuthRequest{}, err
+	}
+	authR, err := ar.AuthData.GetRequest(ctx, Id)
+	if err != nil {
+		return &AuthRequest{}, nil
+	}
+	return authR, nil
 }

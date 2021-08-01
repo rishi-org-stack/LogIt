@@ -39,7 +39,7 @@ func (ap *api) Route(e *echo.Echo) {
 	// 	return c.String(http.StatusAccepted, "Works well\n")
 	// })
 	authService := auth.Init(amdb.AuthDb{}, ap.Jwt)
-	userService := user.Init(&umdb.UserDb{})
+	userService := user.Init(&umdb.UserDb{},authService)
 	authR.Route(authService, v1, mid.ConnectionMDB(ap.Client))
 	userR.Route(v1, userService, ap.MiddleWares...)
 }

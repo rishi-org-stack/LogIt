@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	user "logit/v1/package/user"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Http struct {
@@ -23,7 +23,7 @@ func Route(g *echo.Group, userService *user.UserService, m ...echo.MiddlewareFun
 	}
 	grpAuth := g.Group("/user", m...)
 	grpAuth.GET("/:id", h.getById)
-	grpAuth.PUT("/:id", h.updateById)
+	grpAuth.PUT("/", h.updateById)
 }
 func (h *Http) getById(c echo.Context) error {
 	ctx := context.WithValue(context.Background(), "mgClient", c.Get("mgClient"))
@@ -31,22 +31,26 @@ func (h *Http) getById(c echo.Context) error {
 	user, err := h.uSer.GetUser(ctx, id)
 
 	if err != nil {
-
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	return json.NewEncoder(c.Response().Writer).Encode(user)
+	return c.JSON(http.StatusAccepted, user)
+	// return json.NewEncoder(c.Response().Writer).Encode(user)
 }
 
 func (h *Http) updateById(c echo.Context) error {
 	ctx := context.WithValue(context.Background(), "mgClient", c.Get("mgClient"))
-	id := c.Param("id")
-	Id, _ := primitive.ObjectIDFromHex(id)
-	US := &user.User{
-		ID: Id,
+	US := &user.User{}
+	if err := c.Bind(US); err != nil {
+		return handleError(err, c)
 	}
 	user, err := h.uSer.UpdateUser(ctx, US)
 
 	if err != nil {
-
+		return handleError(err, c)
 	}
 	return json.NewEncoder(c.Response().Writer).Encode(user)
+}
+
+func handleError(e error, c echo.Context) error {
+	return c.JSON(http.StatusInternalServerError, map[string]string{"we have an error:->": e.Error()})
 }
