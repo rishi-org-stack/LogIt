@@ -1,9 +1,11 @@
 package log
 
 import (
+	"os"
 	"time"
 
 	"github.com/golang/glog"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -20,6 +22,17 @@ const (
 	errorLog = "Error: "
 )
 
+var (
+	Log *logrus.Logger
+)
+
+func init() {
+	Log = &logrus.Logger{
+		Level:     logrus.InfoLevel,
+		Out:       os.Stdout,
+		Formatter: &logrus.JSONFormatter{},
+	}
+}
 func Init(source, level string) *message {
 	return &message{
 		source: source,

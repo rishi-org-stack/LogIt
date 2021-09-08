@@ -15,7 +15,7 @@ func Connect(ctx context.Context, env *config.Env) *mongo.Database {
 			ApplyURI(env.DB),
 	)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	fmt.Println("Successfully connected and pinged.")
 	// defer func() {

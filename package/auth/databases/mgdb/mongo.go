@@ -35,7 +35,6 @@ func (au AuthDb) FindOrInsert(ctx context.Context, atr *auth.AuthRequest) (inter
 }
 func (au AuthDb) InsertUser(ctx context.Context, atr *auth.AuthRequest) (interface{}, error) {
 	db := ctx.Value("mgClient").(*mongo.Database)
-
 	res, err := db.Collection(UserDB).InsertOne(ctx, bson.D{{Key: "auth_id", Value: atr.ID}})
 	return res.InsertedID, err
 }
@@ -47,7 +46,7 @@ func (au AuthDb) Update(ctx context.Context, atr *auth.AuthRequest) (interface{}
 	return res.UpsertedID, err
 }
 func (au AuthDb) GetRequest(ctx context.Context, id primitive.ObjectID) (*auth.AuthRequest, error) {
-	db := ctx.Value("mgClient").(*mongo.Database)
+	db := ctx.Value("surround").(map[string]interface{})["mgClient"].(*mongo.Database)
 	req := &auth.AuthRequest{}
 	authColl := db.Collection(DB)
 	result := authColl.FindOne(ctx, bson.D{{Key: "_id", Value: id}})

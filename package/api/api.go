@@ -4,6 +4,8 @@ import (
 	"logit/v1/package/auth"
 	amdb "logit/v1/package/auth/databases/mgdb"
 	authR "logit/v1/package/auth/router"
+	"logit/v1/package/idea"
+	ideamdb "logit/v1/package/idea/databases/mgdb"
 	"logit/v1/package/user"
 	umdb "logit/v1/package/user/databases/mgdb"
 	userR "logit/v1/package/user/router"
@@ -31,7 +33,7 @@ func Init(c *mongo.Database, jwt *jAuth.Auth, m ...echo.MiddlewareFunc) *api {
 	}
 }
 func (ap *api) Route(e *echo.Echo) {
-	e.Use(mid.ConnectionMDB(ap.Client))
+	e.Use(mid.ConnectionMDB(ap.Client), mid.Logger())
 
 	v1 := e.Group("/api/" + ap.Version)
 
@@ -39,7 +41,8 @@ func (ap *api) Route(e *echo.Echo) {
 	// 	return c.String(http.StatusAccepted, "Works well\n")
 	// })
 	authService := auth.Init(amdb.AuthDb{}, ap.Jwt)
-	userService := user.Init(&umdb.UserDb{},authService)
+	ideaService := idea.Init(ideamdb.IdeaDB{})
+	userService := user.Init(&umdb.UserDb{}, authService, ideaService)
 	authR.Route(authService, v1, mid.ConnectionMDB(ap.Client))
 	userR.Route(v1, userService, ap.MiddleWares...)
 }

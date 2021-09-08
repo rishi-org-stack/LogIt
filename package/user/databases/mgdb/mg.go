@@ -61,21 +61,22 @@ type UserDb struct{}
 // 	}
 // 	return res, err
 // }
-func (udb *UserDb) GetUser(ctx context.Context, id primitive.ObjectID) (*user.User, error) {
-	db := ctx.Value("mgClient").(*mongo.Database)
+func (udb UserDb) GetUser(ctx context.Context, id primitive.ObjectID) (*user.User, error) {
+	db := ctx.Value("surround").(map[string]interface{})["mgClient"].(*mongo.Database)
 	userColl := db.Collection(UserDB)
 	us := &user.User{}
-	result := userColl.FindOne(ctx, bson.D{{Key: "_id", Value: id}})
+	result := userColl.FindOne(ctx, bson.D{{Key: "auth_id", Value: id}})
 	err := result.Decode(us)
 	if err != nil {
 		return us, err
 	}
 	return us, nil
 }
-func (Utb *UserDb) UpdateUser(ctx context.Context, us *user.User) (*user.User, error) {
-	db := ctx.Value("mgClient").(*mongo.Database)
+func (Utb UserDb) UpdateUser(ctx context.Context, us *user.User) (*user.User, error) {
+	db := ctx.Value("surround").(map[string]interface{})["mgClient"].(*mongo.Database)
+
 	_, err := db.Collection(UserDB).
-		ReplaceOne(ctx, bson.D{{Key: "_id", Value: us.ID}},
+		ReplaceOne(ctx, bson.D{{Key: "auth_id", Value: us.AuthID}},
 			*us)
 
 	return us, err
