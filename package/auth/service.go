@@ -16,7 +16,7 @@ type (
 	}
 
 	Service interface {
-		HandleAuth(ctx context.Context) (*AuthResponse, error)
+		HandleAuth(ctx context.Context, ar *AuthRequest) (*AuthResponse, error)
 		GetRequestByID(ctx context.Context, id string) (*AuthRequest, error)
 	}
 	AuthRequest struct {

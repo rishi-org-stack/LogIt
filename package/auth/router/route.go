@@ -21,7 +21,11 @@ func Route(ser auth.Service, g *echo.Group, m ...echo.MiddlewareFunc) {
 }
 func (h *Http) ok(c echo.Context) error {
 	ctx := context.WithValue(context.Background(), "mgClient", c.Get("mgClient"))
-	res, err := h.serv.HandleAuth(ctx)
+	ar := &auth.AuthRequest{}
+	if err := c.Bind(ar); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	res, err := h.serv.HandleAuth(ctx, ar)
 	if err != nil {
 		return c.JSON(http.StatusBadGateway, err.Error())
 	}
